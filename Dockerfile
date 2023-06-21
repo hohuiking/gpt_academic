@@ -13,17 +13,6 @@ RUN apt-get update
 RUN apt-get install -y curl proxychains curl 
 RUN apt-get install -y git python python3 python-dev python3-dev --fix-missing
 
-# 配置代理网络（构建Docker镜像时使用）
-# # comment out below if you do not need proxy network | 如果不需要翻墙 - 从此行向下删除
-RUN $useProxyNetwork curl cip.cc
-RUN sed -i '$ d' /etc/proxychains.conf
-RUN sed -i '$ d' /etc/proxychains.conf
-# 在这里填写主机的代理协议（用于从github拉取代码）
-RUN echo "socks5 127.0.0.1 10880" >> /etc/proxychains.conf
-ARG useProxyNetwork=proxychains
-# # comment out above if you do not need proxy network | 如果不需要翻墙 - 从此行向上删除
-
-
 # use python3 as the system default python
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.8
 # 下载pytorch
