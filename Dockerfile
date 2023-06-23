@@ -4,6 +4,8 @@ ap-northeast-1# How to build | 如何构建: docker build -t gpt-academic --netw
  
 # 从NVIDIA源，从而支持显卡运损（检查宿主的nvidia-smi中的cuda版本必须>=11.3）
 FROM registry.ap-northeast-1.aliyuncs.com/hohuiking/cuda:11.3.1-runtime-ubuntu20.04
+
+
 ARG useProxyNetwork=''
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
