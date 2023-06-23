@@ -3,7 +3,7 @@
 # How to run | (2) 我想运行之前进容器做一些调整（选择1号GPU）: docker run --rm -it --net=host --gpus \"device=1\" gpt-academic bash
  
 # 从NVIDIA源，从而支持显卡运损（检查宿主的nvidia-smi中的cuda版本必须>=11.3）
-FROM registry.cn-hangzhou.aliyuncs.com/hohuiking/cuda:11.3.1-runtime-ubuntu20.04
+FROM nvidia/cuda:11.3.1-runtime-ubuntu20.04
 ARG useProxyNetwork=''
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
 #RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
