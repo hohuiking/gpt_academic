@@ -5,8 +5,8 @@
 # 从NVIDIA源，从而支持显卡运损（检查宿主的nvidia-smi中的cuda版本必须>=11.3）
 FROM nvidia/cuda:11.3.1-runtime-ubuntu20.04
 ARG useProxyNetwork=''
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
 # RUN apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
 
 RUN apt-get update
