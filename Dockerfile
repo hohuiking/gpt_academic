@@ -28,11 +28,11 @@ RUN $useProxyNetwork python3 -m pip install -r request_llm/requirements_chatglm.
 RUN $useProxyNetwork python3 -m pip install -r request_llm/requirements_newbing.txt
 
 # 预热CHATGLM参数（非必要 可选步骤）
-#RUN echo ' \n\
-#from transformers import AutoModel, AutoTokenizer \n\
-#chatglm_tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True) \n\
-#chatglm_model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).float() ' >> warm_up_chatglm.py
-#RUN python3 -u warm_up_chatglm.py
+RUN echo ' \n\
+from transformers import AutoModel, AutoTokenizer \n\
+chatglm_tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True) \n\
+chatglm_model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda() ' >> warm_up_chatglm.py
+RUN python3 -u warm_up_chatglm.py
 
 # 禁用缓存，确保更新代码
 #ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
