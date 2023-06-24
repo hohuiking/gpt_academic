@@ -3,7 +3,7 @@ ap-northeast-1# How to build | 如何构建: docker build -t gpt-academic --netw
 # How to run | (2) 我想运行之前进容器做一些调整（选择1号GPU）: docker run --rm -it --net=host --gpus \"device=1\" gpt-academic bash
  
 # 从NVIDIA源，从而支持显卡运损（检查宿主的nvidia-smi中的cuda版本必须>=11.3）
-FROM registry.ap-northeast-1.aliyuncs.com/hohuiking/cuda:11.3.1-runtime-ubuntu20.04
+FROM nvidia/cuda:11.3.1-runtime-ubuntu20.04
 
 
 ARG useProxyNetwork=''
@@ -46,12 +46,12 @@ RUN python3  -c 'from check_proxy import warm_up_modules; warm_up_modules()'
 # LLM_MODEL 是选择初始的模型
 # LOCAL_MODEL_DEVICE 是选择chatglm等本地模型运行的设备，可选 cpu 和 cuda
 # [说明: 以下内容与`config.py`一一对应，请查阅config.py来完成一下配置的填写]
-RUN echo ' \n\
-API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,fkxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \n\
-USE_PROXY = True \n\
-LLM_MODEL = "chatglm" \n\
-LOCAL_MODEL_DEVICE = "cuda" \n\
-proxies = { "http": "socks5h://localhost:10880", "https": "socks5h://localhost:10880", } ' >> config_private.py
+#RUN echo ' \n\
+#API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,fkxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \n\
+#USE_PROXY = True \n\
+#LLM_MODEL = "chatglm" \n\
+#LOCAL_MODEL_DEVICE = "cuda" \n\
+#proxies = { "http": "socks5h://localhost:10880", "https": "socks5h://localhost:10880", } ' >> config_private.py
 
 # 启动
 CMD ["python3", "-u", "main.py"]
