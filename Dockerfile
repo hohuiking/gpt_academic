@@ -30,8 +30,8 @@ RUN $useProxyNetwork python3 -m pip install -r request_llm/requirements_newbing.
 # 预热CHATGLM参数（非必要 可选步骤）
 RUN echo ' \n\
 from transformers import AutoModel, AutoTokenizer \n\
-chatglm_tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True) \n\
-chatglm_model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda() ' >> warm_up_chatglm.py
+chatglm_tokenizer = AutoTokenizer.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True) \n\
+chatglm_model = AutoModel.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True).half().cuda() ' >> warm_up_chatglm.py
 RUN python3 -u warm_up_chatglm.py
 
 # 禁用缓存，确保更新代码
