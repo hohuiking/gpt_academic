@@ -43,7 +43,9 @@ class GetGLMHandle(Process):
                     self.chatglm_tokenizer = AutoTokenizer.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True)
                     device, = get_conf('LOCAL_MODEL_DEVICE')
                     if device=='cpu':
-                        self.chatglm_model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).float()
+                        self.chatglm_model = AutoModel.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True).float()
+                    if device=='mac':
+                        self.chatglm_model = AutoModel.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True).float().to('mps')
                     else:
                         self.chatglm_model = AutoModel.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True).half().cuda()
                     self.chatglm_model = self.chatglm_model.eval()

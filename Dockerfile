@@ -1,56 +1,28 @@
-# How to build | 如何构建: docker build -t gpt-academic --network=host  -f Dockerfile+ChatGLM .
-# How to run | (1) 我想直接一键运行（选择0号GPU）: docker run --rm -it --net=host --gpus \"device=0\" gpt-academic
-# How to run | (2) 我想运行之前进容器做一些调整（选择1号GPU）: docker run --rm -it --net=host --gpus \"device=1\" gpt-academic bash
- 
-# 从NVIDIA源，从而支持显卡运损（检查宿主的nvidia-smi中的cuda版本必须>=11.3）
-FROM registry.ap-northeast-1.aliyuncs.com/hohuiking/cuda:11.3.1-runtime-ubuntu20.04
+# 此Dockerfile适用于“无本地模型”的环境构建，如果需要使用chatglm等本地模型，请参考 docs/Dockerfile+ChatGLM
+# 如何构建: 先修改 `config.py`， 然后 docker build -t gpt-academic .
+# 如何运行: docker run --rm -it --net=host gpt-academic
+FROM python:3.11
+
+RUN echo '[global]' > /etc/pip.conf && \
+    echo 'index-url = https://mirrors.aliyun.com/pypi/simple/' >> /etc/pip.conf && \
+    echo 'trusted-host = mirrors.aliyun.com' >> /etc/pip.conf
 
 
-ARG useProxyNetwork=''
-#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
-#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
-# RUN apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
-
-RUN apt-get update
-RUN apt-get install -y curl proxychains curl 
-RUN apt-get install -y git python python3 python-dev python3-dev --fix-missing
-
-# use python3 as the system default python
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.8
-# 下载pytorch
-RUN $useProxyNetwork python3 -m pip install torch --extra-index-url https://download.pytorch.org/whl/cu113
-# 下载分支
 WORKDIR /gpt
-# RUN $useProxyNetwork git clone https://github.com/binary-husky/chatgpt_academic.git
-COPY . ./chatgpt_academic
-WORKDIR /gpt/chatgpt_academic
-RUN $useProxyNetwork python3 -m pip install -r requirements.txt
-RUN $useProxyNetwork python3 -m pip install -r request_llm/requirements_chatglm.txt
-RUN $useProxyNetwork python3 -m pip install -r request_llm/requirements_newbing.txt
 
-# 预热CHATGLM参数（非必要 可选步骤）
-#RUN echo ' \n\
-#from transformers import AutoModel, AutoTokenizer \n\
-#chatglm_tokenizer = AutoTokenizer.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True) \n\
-#chatglm_model = AutoModel.from_pretrained("/root/.cache/huggingface/THUDM/chatglm-6b", trust_remote_code=True).half().cuda() ' >> warm_up_chatglm.py
-#RUN python3 -u warm_up_chatglm.py
 
-# 禁用缓存，确保更新代码
-#ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
-#RUN $useProxyNetwork git pull
 
-# 预热Tiktoken模块
+
+# 安装依赖
+COPY requirements.txt ./
+COPY ./docs/gradio-3.32.2-py3-none-any.whl ./docs/gradio-3.32.2-py3-none-any.whl
+RUN pip3 install -r requirements.txt
+# 装载项目文件
+COPY . .
+RUN pip3 install -r requirements.txt
+
+# 可选步骤，用于预热模块
 RUN python3  -c 'from check_proxy import warm_up_modules; warm_up_modules()'
-
-# 为chatgpt-academic配置代理和API-KEY （非必要 可选步骤）
-# 可同时填写多个API-KEY，支持openai的key和api2d的key共存，用英文逗号分割，例如API_KEY = "sk-openaikey1,fkxxxx-api2dkey2,........"
-# LLM_MODEL 是选择初始的模型
-# LOCAL_MODEL_DEVICE 是选择chatglm等本地模型运行的设备，可选 cpu 和 cuda
-# [说明: 以下内容与`config.py`一一对应，请查阅config.py来完成一下配置的填写]
-RUN echo ' \n\
-USE_PROXY = False \n\
-LLM_MODEL = "chatglm" \n\
-LOCAL_MODEL_DEVICE = "cuda" ' >> config_private.py
 
 # 启动
 CMD ["python3", "-u", "main.py"]
